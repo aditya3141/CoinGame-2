@@ -1,44 +1,49 @@
+// Import necessary modules
 import express from "express";
-import authRoutes from "./routes/authRoutes.js";
-import connectDb from "./config/db.js";
-import dotenv from "dotenv";
-
-import path from "path";
-import morgan from "morgan";
-import { fileURLToPath } from "url";
 import cors from "cors";
+import authRoutes from "./routes/authRoutes.js"; // Importing your authentication routes
+import connectDb from "./config/db.js"; // Importing database connection function
+import dotenv from "dotenv"; // For loading environment variables
+import path from "path"; // For working with file paths
+import morgan from "morgan"; // For logging HTTP requests
+import { fileURLToPath } from "url"; // For handling file URLs
+
+// Create an instance of Express
 const app = express();
-// connect db
+
+// Connect to the database
 connectDb();
+
+// Load environment variables from .env file
 dotenv.config();
-// es module fix
+
+// Fix for ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 // Middleware
+app.use(express.json()); // Parse incoming JSON requests
+app.use(cors()); // Enable CORS for all routes
+app.use(express.static(path.join(__dirname, "./client/build"))); // Serve static files from client/build directory
+app.use(morgan("dev")); // Log HTTP requests
 
-app.use(express.json());
-app.use(morgan("dev"));
-
-// app.use(express.static(path.join(__dirname, "./client/build")));
-
+// Enable CORS for specific origin and methods
 app.use(
   cors({
     origin: "http://localhost:3000",
     methods: "GET,POST,PUT,DELETE",
-    credentials: true,
+    credentials: true, // Allow credentials (cookies, authorization headers)
   })
 );
-app.use(express.json());
-
-app.use(express.static(path.join(__dirname, "./client/build")));
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes); // Mount authentication routes under /api/auth
 
-// rest api
+// Fallback route to serve the React app
 app.use("*", function (req, res) {
   res.sendFile(path.join(__dirname, "./client/build/index.html"));
 });
+
 // Define port
 const PORT = process.env.PORT || 7000;
 
@@ -47,4 +52,5 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+// Export the Express app (for testing purposes or potential future modifications)
 export default app;
