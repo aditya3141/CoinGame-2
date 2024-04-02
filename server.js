@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import connectDb from "./config/db.js";
 import dotenv from "dotenv";
@@ -7,6 +6,7 @@ import dotenv from "dotenv";
 import path from "path";
 import morgan from "morgan";
 import { fileURLToPath } from "url";
+import cors from "cors";
 const app = express();
 // connect db
 connectDb();
