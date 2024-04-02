@@ -17,9 +17,10 @@ const __dirname = path.dirname(__filename);
 // Middleware
 
 app.use(express.json());
-app.use(cors());
-app.use(express.static(path.join(__dirname, "./client/build")));
 app.use(morgan("dev"));
+
+// app.use(express.static(path.join(__dirname, "./client/build")));
+
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -27,6 +28,10 @@ app.use(
     credentials: true,
   })
 );
+app.use(express.json());
+
+app.use(express.static(path.join(__dirname, "./client/build")));
+
 // Routes
 app.use("/api/auth", authRoutes);
 
